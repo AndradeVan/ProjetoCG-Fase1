@@ -4,6 +4,10 @@ var renderer;
 var cube;
 var geometry;
 
+var angle = 0;
+var radius = 10;
+var flagAprox = 0;
+
 /*Utilização da biblioteca three.js */
 
 var init = function() {
@@ -18,25 +22,25 @@ var init = function() {
     this.createACube();
     this.createPlane();
 
-    camera.position.z = 5;
-    /*Quando chamamos scene.add ele é direcionado para ( 0, 0, 0 )*/ 
     this.render();
 
 };
 
 window.onload = this.init;
-/*Qualquer coisa que queiramos mover ou 
+/*Qualquer coisa que queiramos mover ou
 mudar enquanto o app está rodando deve ser colocado dentro do render. */
 var render = function() {
     requestAnimationFrame( render );
     this.animateCube();
-    renderer.render( scene, camera );  
+    this.cameraRotation();
+
+    renderer.render( scene, camera );
 };
 
 var createACube = function() {
 
     geometry = new THREE.BoxGeometry( 1, 1, 1 );
-    
+
     geometry.faces[0].color.setHex(0xffffff);
     geometry.faces[1].color.setHex(0xffffff);
     geometry.faces[2].color.setHex(0x009b48);
@@ -52,7 +56,7 @@ var createACube = function() {
 
 
     var material = new THREE.MeshBasicMaterial( { vertexColors: THREE.FaceColors  } );
-    
+
     cube = new THREE.Mesh( geometry, material );
     cube.position.x = 0;
     cube.position.y = 0;
@@ -78,4 +82,25 @@ var animateCube = function() {
     cube.rotation.x += 0.01;
     cube.rotation.y += 0.01;
     cube.rotation.z += 0.01;
+}
+
+/*Rotacionar camera */
+var cameraRotation = function() {
+
+    camera.lookAt(scene.position);
+    camera.position.x = radius * Math.cos(angle);
+    camera.position.z = radius * Math.sin(angle);
+    angle += 0.01;
+
+    /*aproximar a camera do objeto */
+    if(flagAprox == 0){
+        radius -= 0.05;
+        if(radius <= 3)
+            flagAprox = 1;
+    }
+    else{
+        radius += 0.05;
+        if(radius >= 15)
+            flagAprox = 0;
+    }
 }
