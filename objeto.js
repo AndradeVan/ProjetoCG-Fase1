@@ -29,13 +29,30 @@ window.onload = this.init;
 mudar enquanto o app está rodando deve ser colocado dentro do render. */
 var render = function() {
     requestAnimationFrame( render );
+    this.animateCube();
     renderer.render( scene, camera );  
 };
 
 var createACube = function() {
 
     geometry = new THREE.BoxGeometry( 1, 1, 1 );
-    var material = new THREE.MeshBasicMaterial( { color: "red"  } );
+    
+    geometry.faces[0].color.setHex(0xffffff);
+    geometry.faces[1].color.setHex(0xffffff);
+    geometry.faces[2].color.setHex(0x009b48);
+    geometry.faces[3].color.setHex(0x009b48);
+    geometry.faces[4].color.setHex(0xffd500);
+    geometry.faces[5].color.setHex(0xffd500);
+    geometry.faces[6].color.setHex(0x0045ad);
+    geometry.faces[7].color.setHex(0x0045ad);
+    geometry.faces[8].color.setHex(0xb90000);
+    geometry.faces[9].color.setHex(0xb90000);
+    geometry.faces[10].color.setHex(0xff5900);
+    geometry.faces[11].color.setHex(0xff5900);
+
+
+    var material = new THREE.MeshBasicMaterial( { vertexColors: THREE.FaceColors  } );
+    
     cube = new THREE.Mesh( geometry, material );
     cube.position.x = 0;
     cube.position.y = 0;
@@ -56,3 +73,9 @@ var createPlane = function() {
     scene.add(plane);
 };
 
+/* rodacionar objeto */
+var animateCube = function() {
+    cube.rotation.x += 0.01;
+    cube.rotation.y += 0.01;
+    cube.rotation.z += 0.01;
+}
