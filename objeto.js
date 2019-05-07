@@ -1,74 +1,68 @@
 var scene;
 var camera;
 var renderer;
-var cube;
-var geometry;
 
 var angle = 0;
-var radius = 10;
+var radius = 100;
 var flagAprox = 0;
-
-/*Utilização da biblioteca three.js */
 
 var init = function() {
 
+    /*criando cenario */
     scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 1000 );
+    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
+    camera.position.z = 125;
+
+   var ambientLight = new THREE.AmbientLight(0xcccccc,0.4);
+   scene.add(ambientLight);
+   var pointLight = new THREE.PointLight(0xffffff,0.8);
+   camera.add(pointLight);
+   scene.add(camera);
+
+    /*criacao do objeto */
+    this.createObj();
+
     /*O renderizador utilizado é o WebGL*/
     renderer = new THREE.WebGLRenderer();
-    renderer.setSize( window.innerWidth, window.innerHeight );
-    document.body.appendChild( renderer.domElement );
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
 
-    this.createACube();
     this.createPlane();
-
     this.render();
-
 };
 
 window.onload = this.init;
-/*Qualquer coisa que queiramos mover ou
-mudar enquanto o app está rodando deve ser colocado dentro do render. */
+
+/* funcao de criacao do objeto */
+var createObj = function(){
+    THREE.Loader.Handlers.add(/\.dds$/i, new THREE.DDSLoader());
+    var loader = new THREE.MTLLoader();
+    loader.load('Skull_v3/12140_Skull_v3_L2.mtl', function (materials) {
+
+        materials.preload();
+
+        var objloader = new THREE.OBJLoader();
+        objloader.setMaterials(materials);
+
+        /* atribui posicoes do objeto, e o adiciona a cena */
+        objloader.load('Skull_v3/12140_Skull_v3_L2.obj', function (object) {
+            object.position.set(0,10,-15);
+            object.rotation.set(-45,0,0);
+         scene.add(object);
+        });
+    });
+}
+
 var render = function() {
-    requestAnimationFrame( render );
-    this.animateCube();
+    requestAnimationFrame(render);
     this.cameraRotation();
-
-    renderer.render( scene, camera );
-};
-
-var createACube = function() {
-
-    geometry = new THREE.BoxGeometry( 1, 1, 1 );
-
-    geometry.faces[0].color.setHex(0xffffff);
-    geometry.faces[1].color.setHex(0xffffff);
-    geometry.faces[2].color.setHex(0x009b48);
-    geometry.faces[3].color.setHex(0x009b48);
-    geometry.faces[4].color.setHex(0xffd500);
-    geometry.faces[5].color.setHex(0xffd500);
-    geometry.faces[6].color.setHex(0x0045ad);
-    geometry.faces[7].color.setHex(0x0045ad);
-    geometry.faces[8].color.setHex(0xb90000);
-    geometry.faces[9].color.setHex(0xb90000);
-    geometry.faces[10].color.setHex(0xff5900);
-    geometry.faces[11].color.setHex(0xff5900);
-
-
-    var material = new THREE.MeshBasicMaterial( { vertexColors: THREE.FaceColors  } );
-
-    cube = new THREE.Mesh( geometry, material );
-    cube.position.x = 0;
-    cube.position.y = 0;
-    cube.position.z = 0;
-    //ou
-    //cube.position.set(2, 1, -1)
-    scene.add( cube );
+    renderer.render(scene, camera);
 };
 
 /*Criar um plano embaixo do objeto*/
 var createPlane = function() {
-    var planeGeometry = new THREE.PlaneGeometry(20, 20);
+    var planeGeometry = new THREE.PlaneGeometry(100, 100);
     var planeMaterial = new THREE.MeshBasicMaterial({ color: 0xcccccc});
     plane = new THREE.Mesh(planeGeometry, planeMaterial);
 
@@ -77,30 +71,12 @@ var createPlane = function() {
     scene.add(plane);
 };
 
-/* rodacionar objeto */
-var animateCube = function() {
-    cube.rotation.x += 0.01;
-    cube.rotation.y += 0.01;
-    cube.rotation.z += 0.01;
-}
-
-/*Rotacionar camera */
+/* funcao de rotacao da camera em volta do objeto */
 var cameraRotation = function() {
 
     camera.lookAt(scene.position);
     camera.position.x = radius * Math.cos(angle);
     camera.position.z = radius * Math.sin(angle);
+    camera.position.y = 25;
     angle += 0.01;
-
-    /*aproximar a camera do objeto */
-    if(flagAprox == 0){
-        radius -= 0.05;
-        if(radius <= 3)
-            flagAprox = 1;
-    }
-    else{
-        radius += 0.05;
-        if(radius >= 15)
-            flagAprox = 0;
-    }
 }
