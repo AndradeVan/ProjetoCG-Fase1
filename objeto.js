@@ -47,13 +47,13 @@ function movement(event) {
     key = String.fromCharCode(event.which);
 
    if (key == "W"){
-      psyduck.position.z = psyduck.position.z - 1;
-   } else if (key == "S"){
-      psyduck.position.z = psyduck.position.z + 1;
-   } else if (key == "D"){
-      psyduck.position.x = psyduck.position.x + 1;
-   } else if (key == "A"){
       psyduck.position.x = psyduck.position.x - 1;
+   } else if (key == "S"){
+      psyduck.position.x = psyduck.position.x + 1;
+   } else if (key == "D"){
+      psyduck.position.z = psyduck.position.z - 1;
+   } else if (key == "A"){
+      psyduck.position.z = psyduck.position.z + 1;
    }
 
 };
