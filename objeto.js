@@ -16,6 +16,8 @@ var init = function() {
     /*criando cenario */
     scene = new THREE.Scene();
     scene.background = new THREE.Color(0xffffff);
+
+    /*inicializando camera1 e camera2 */
     camera1 = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
     camera1.position.z = 200;
     camera1.position.y = 20;
@@ -33,22 +35,24 @@ var init = function() {
 	camera1.add(pointLight);
 	scene.add(camera1);
 
-    this.createObj();
-    this.createObj1();
+   /*criando os objetos */
+   this.createObj();
+   this.createObj1();
 
-    /*O renderizador utilizado é o WebGL*/
-    renderer = new THREE.WebGLRenderer();
-    renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(renderer.domElement);
+   /*O renderizador utilizado é o WebGL*/
+   renderer = new THREE.WebGLRenderer();
+   renderer.setPixelRatio(window.devicePixelRatio);
+   renderer.setSize(window.innerWidth, window.innerHeight);
+   document.body.appendChild(renderer.domElement);
 
-    this.createPlane();
+   this.createPlane();
 
-    this.render();
+   this.render();
 };
 
 window.onload = this.init;
 
+/*funcao para mover o objeto Obj1 e mudar de posicao a camera */
 function movement(event) {
    //var matrixRotationW = new THREE.Matrix4().makeRotationY(1,5708);
 
@@ -72,7 +76,7 @@ function movement(event) {
 
 };
 
-/*Criação do objeto */
+/*Criação do objeto 1 */
 var createObj = function(){
     THREE.Loader.Handlers.add(/\.dds$/i, new THREE.DDSLoader());
     var loader = new THREE.MTLLoader();
@@ -92,7 +96,7 @@ var createObj = function(){
         });
     });
 }
-
+/*Criação do objeto 2 */
 var createObj1 = function(){
     THREE.Loader.Handlers.add(/\.dds$/i, new THREE.DDSLoader());
     var loader = new THREE.MTLLoader();
@@ -113,7 +117,6 @@ var createObj1 = function(){
 
             var matrixS = new THREE.Matrix4().makeScale(0.03, 0.03, 0.03);
             object.applyMatrix(matrixS);
-
 
 			psyduck.add(object);
          scene.add(psyduck);
@@ -145,7 +148,7 @@ var createPlane = function() {
     scene.add(plane);
 };
 
-/*funcao para a rotação da camera */
+/*posicionar a camera 1*/
 var camera1Position = function() {
 
     camera1.lookAt(scene.position);
@@ -154,7 +157,7 @@ var camera1Position = function() {
     camera1.position.y = 80;
     angle -= 0.01;
 }
-
+/*posicionar a camera 2*/
 var camera2Position = function() {
 
     camera2.lookAt(scene.position);
