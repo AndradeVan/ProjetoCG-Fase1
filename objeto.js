@@ -1,5 +1,5 @@
 var scene;
-var camera;
+var camera1, camera2;
 var renderer;
 
 var angle = 0;
@@ -9,13 +9,20 @@ var flagAprox = 0;
 var psyduck = new THREE.Object3D();
 var lamp = new THREE.Object3D();
 
+var cameraSelector = false;
+
 var init = function() {
 
     /*criando cenario */
     scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
-    camera.position.z = 200;
-    camera.position.y = 20;
+    scene.background = new THREE.Color(0xffffff);
+    camera1 = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
+    camera1.position.z = 200;
+    camera1.position.y = 20;
+
+    camera2 = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
+    camera2.position.z = 200;
+    camera2.position.y = 20;
 
     document.addEventListener("keydown", movement);
 
@@ -23,9 +30,8 @@ var init = function() {
 	var ambientLight = new THREE.AmbientLight(0xcccccc,0.4);
 	scene.add(ambientLight);
 	var pointLight = new THREE.PointLight(0xffffff,0.8);
-	camera.add(pointLight);
-	scene.add(camera);
-
+	camera1.add(pointLight);
+	scene.add(camera1);
 
     this.createObj();
     this.createObj1();
@@ -44,6 +50,8 @@ var init = function() {
 window.onload = this.init;
 
 function movement(event) {
+   //var matrixRotationW = new THREE.Matrix4().makeRotationY(1,5708);
+
     key = String.fromCharCode(event.which);
 
    if (key == "W"){
@@ -54,6 +62,12 @@ function movement(event) {
       psyduck.position.z = psyduck.position.z - 1;
    } else if (key == "A"){
       psyduck.position.z = psyduck.position.z + 1;
+   }
+
+   if (key == "1"){
+      cameraSelector = true;
+   } else if (key == "2"){
+      cameraSelector = false;
    }
 
 };
@@ -91,13 +105,8 @@ var createObj1 = function(){
 
         objloader.load('psyduck/psyduck.obj', function (object) {
 
-            /**/
-            //object.position.set(-1000,-110,350);
             object.rotation.z = 90 * Math.cos(0);
             object.rotation.x = 45 * Math.cos(180);
-            //object.position.y = 400;
-            //Object.position.x = radius * Math.cos(angle);
-            //Object.position.z = radius * Math.sin(angle);
 
             var matrix = new THREE.Matrix4().makeTranslation(-100, 0, 0);
             object.applyMatrix(matrix);
@@ -114,9 +123,15 @@ var createObj1 = function(){
 
 var render = function() {
     requestAnimationFrame(render);
-    this.cameraRotation();
-    renderer.render(scene, camera);
 
+   if (cameraSelector){
+      this.camera1Position();
+      renderer.render (scene, camera1);
+   }
+   else{
+      this.camera2Position();
+      renderer.render (scene, camera2);
+   }
 };
 
 /*Criar um plano embaixo do objeto*/
@@ -131,12 +146,21 @@ var createPlane = function() {
 };
 
 /*funcao para a rotação da camera */
-var cameraRotation = function() {
+var camera1Position = function() {
 
-    camera.lookAt(scene.position);
-    camera.position.x = radius * Math.cos(angle);
-    camera.position.z = radius * Math.sin(angle);
-    camera.position.y = 25;
-    //angle += 0.01;
+    camera1.lookAt(scene.position);
+    camera1.position.x = radius * Math.cos(angle);
+    camera1.position.z = radius * Math.sin(angle);
+    camera1.position.y = 80;
+    angle -= 0.01;
+}
+
+var camera2Position = function() {
+
+    camera2.lookAt(scene.position);
+    camera2.position.x = radius * Math.cos(angle);
+    camera2.position.z = radius * Math.sin(angle);
+    camera2.position.y = 25;
+    angle += 0.01;
 }
 
