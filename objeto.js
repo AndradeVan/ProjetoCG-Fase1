@@ -6,21 +6,29 @@ var angle = 0;
 var radius = 100;
 var flagAprox = 0;
 
+var psyduck = new THREE.Object3D();
+var lamp = new THREE.Object3D();
+
 var init = function() {
 
     /*criando cenario */
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
-    camera.position.z = 125;
+    camera.position.z = 200;
+    camera.position.y = 20;
 
-   var ambientLight = new THREE.AmbientLight(0xcccccc,0.4);
-   scene.add(ambientLight);
-   var pointLight = new THREE.PointLight(0xffffff,0.8);
-   camera.add(pointLight);
-   scene.add(camera);
+    document.addEventListener("keydown", movement);
 
-    /*criacao do objeto */
+    /* ilumi*/
+	var ambientLight = new THREE.AmbientLight(0xcccccc,0.4);
+	scene.add(ambientLight);
+	var pointLight = new THREE.PointLight(0xffffff,0.8);
+	camera.add(pointLight);
+	scene.add(camera);
+
+
     this.createObj();
+    this.createObj1();
 
     /*O renderizador utilizado é o WebGL*/
     renderer = new THREE.WebGLRenderer();
@@ -29,27 +37,77 @@ var init = function() {
     document.body.appendChild(renderer.domElement);
 
     this.createPlane();
+
     this.render();
 };
 
 window.onload = this.init;
 
-/* funcao de criacao do objeto */
+function movement(event) {
+    key = String.fromCharCode(event.which);
+
+   if (key == "W"){
+      psyduck.position.z = psyduck.position.z - 1;
+   } else if (key == "S"){
+      psyduck.position.z = psyduck.position.z + 1;
+   } else if (key == "D"){
+      psyduck.position.x = psyduck.position.x + 1;
+   } else if (key == "A"){
+      psyduck.position.x = psyduck.position.x - 1;
+   }
+
+};
+
+/*Criação do objeto */
 var createObj = function(){
     THREE.Loader.Handlers.add(/\.dds$/i, new THREE.DDSLoader());
     var loader = new THREE.MTLLoader();
-    loader.load('Skull_v3/12140_Skull_v3_L2.mtl', function (materials) {
+    loader.load('Street_Lamp/StreetLamp.mtl', function (materials) {
 
         materials.preload();
 
         var objloader = new THREE.OBJLoader();
-        objloader.setMaterials(materials);
+        objloader.setMaterials(materials)
 
-        /* atribui posicoes do objeto, e o adiciona a cena */
-        objloader.load('Skull_v3/12140_Skull_v3_L2.obj', function (object) {
-            object.position.set(0,10,-15);
-            object.rotation.set(-45,0,0);
-         scene.add(object);
+        objloader.load('Street_Lamp/StreetLamp.obj', function (object) {
+         var matrix = new THREE.Matrix4().makeScale(2, 2, 2);
+         object.applyMatrix(matrix);
+
+         lamp.add(object);
+			scene.add(lamp);
+        });
+    });
+}
+
+var createObj1 = function(){
+    THREE.Loader.Handlers.add(/\.dds$/i, new THREE.DDSLoader());
+    var loader = new THREE.MTLLoader();
+    loader.load('psyduck/psyduck.mtl', function (materials) {
+
+        materials.preload();
+
+        var objloader = new THREE.OBJLoader();
+        objloader.setMaterials(materials)
+
+        objloader.load('psyduck/psyduck.obj', function (object) {
+
+            /**/
+            //object.position.set(-1000,-110,350);
+            object.rotation.z = 90 * Math.cos(0);
+            object.rotation.x = 45 * Math.cos(180);
+            //object.position.y = 400;
+            //Object.position.x = radius * Math.cos(angle);
+            //Object.position.z = radius * Math.sin(angle);
+
+            var matrix = new THREE.Matrix4().makeTranslation(-100, 0, 0);
+            object.applyMatrix(matrix);
+
+            var matrixS = new THREE.Matrix4().makeScale(0.03, 0.03, 0.03);
+            object.applyMatrix(matrixS);
+
+
+			psyduck.add(object);
+         scene.add(psyduck);
         });
     });
 }
@@ -58,6 +116,7 @@ var render = function() {
     requestAnimationFrame(render);
     this.cameraRotation();
     renderer.render(scene, camera);
+
 };
 
 /*Criar um plano embaixo do objeto*/
@@ -71,12 +130,13 @@ var createPlane = function() {
     scene.add(plane);
 };
 
-/* funcao de rotacao da camera em volta do objeto */
+/*funcao para a rotação da camera */
 var cameraRotation = function() {
 
     camera.lookAt(scene.position);
     camera.position.x = radius * Math.cos(angle);
     camera.position.z = radius * Math.sin(angle);
     camera.position.y = 25;
-    angle += 0.01;
+    //angle += 0.01;
 }
+
