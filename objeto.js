@@ -5,6 +5,7 @@ var renderer;
 var angle = 0;
 var radius = 100;
 var flagAprox = 0;
+var precisaoBezier = 50;
 
 var psyduck = new THREE.Object3D();
 var lamp = new THREE.Object3D();
@@ -26,7 +27,24 @@ var init = function() {
     camera2.position.z = 200;
     camera2.position.y = 20;
 
-    document.addEventListener("keydown", movement);
+    var curve = new THREE.CubicBezierCurve3(
+      new THREE.Vector3( -10, 0, 0 ),
+      new THREE.Vector3( 100, 15, 40 ),
+      new THREE.Vector3( -50, 0, 0 ),
+      new THREE.Vector3( -50, 0, 0 )
+   );
+   
+   var points = curve.getPoints(precisaoBezier);
+   var geometry = new THREE.BufferGeometry().setFromPoints( points );
+   var material = new THREE.LineBasicMaterial( { color : 0xff0000 } );
+   
+   // Create the final object to add to the scene
+   var curveObject = new THREE.Line( geometry, material );
+
+   scene.add(curveObject);
+
+   document.addEventListener("keydown", movement);
+   this.moverPato(points);
 
     /* ilumi*/
 	var ambientLight = new THREE.AmbientLight(0xcccccc,0.4);
@@ -76,6 +94,18 @@ function movement(event) {
 
 };
 
+var moverPato = function(points){
+  // var i;
+
+      for(let i = 0; i <= precisaoBezier; i+=1){
+         psyduck.position.x = points[i].x;
+         psyduck.position.y = points[i].y;
+         psyduck.position.z = points[i].z;
+         sleep(5000);
+      }
+   
+}
+
 /*Criação do objeto 1 */
 var createObj = function(){
     THREE.Loader.Handlers.add(/\.dds$/i, new THREE.DDSLoader());
@@ -97,7 +127,7 @@ var createObj = function(){
     });
 }
 /*Criação do objeto 2 */
-var createObj1 = function(){
+var createObj1 = function(points){
     THREE.Loader.Handlers.add(/\.dds$/i, new THREE.DDSLoader());
     var loader = new THREE.MTLLoader();
     loader.load('psyduck/psyduck.mtl', function (materials) {
@@ -167,3 +197,11 @@ var camera2Position = function() {
     angle += 0.01;
 }
 
+function sleep(milliseconds) {
+   var start = new Date().getTime();
+   for (var i = 0; i < 1e7; i++) {
+     if ((new Date().getTime() - start) > milliseconds){
+       break;
+     }
+   }
+}
