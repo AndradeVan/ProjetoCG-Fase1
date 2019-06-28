@@ -12,6 +12,8 @@ var lamp = new THREE.Object3D();
 
 var cameraSelector = false;
 
+var points;
+
 var init = function() {
 
     /*criando cenario */
@@ -29,12 +31,12 @@ var init = function() {
 
     var curve = new THREE.CubicBezierCurve3(
       new THREE.Vector3( -10, 0, 0 ),
-      new THREE.Vector3( 100, 15, 40 ),
-      new THREE.Vector3( -50, 0, 0 ),
-      new THREE.Vector3( -50, 0, 0 )
+      new THREE.Vector3( 100, 15, 0 ),
+      new THREE.Vector3( -15, 150, 0 ),
+      new THREE.Vector3( -15, 0, 0 )
    );
    
-   var points = curve.getPoints(precisaoBezier);
+   points = curve.getPoints(precisaoBezier);
    var geometry = new THREE.BufferGeometry().setFromPoints( points );
    var material = new THREE.LineBasicMaterial( { color : 0xff0000 } );
    
@@ -44,7 +46,6 @@ var init = function() {
    scene.add(curveObject);
 
    document.addEventListener("keydown", movement);
-   this.moverPato(points);
 
     /* ilumi*/
 	var ambientLight = new THREE.AmbientLight(0xcccccc,0.4);
@@ -94,16 +95,17 @@ function movement(event) {
 
 };
 
-var moverPato = function(points){
+var i_curva = 0;
+var moverPatoBezier = function(points){
   // var i;
 
-      for(let i = 0; i <= precisaoBezier; i+=1){
-         psyduck.position.x = points[i].x;
-         psyduck.position.y = points[i].y;
-         psyduck.position.z = points[i].z;
-         sleep(5000);
-      }
-   
+      //for(let i = 0; i <= precisaoBezier; i+=1){
+         psyduck.position.x = points[i_curva].x;
+         psyduck.position.y = points[i_curva].y;
+         psyduck.position.z = points[i_curva].z;
+        // sleep(500);
+      //}
+   i_curva+=1;
 }
 
 /*Criação do objeto 1 */
@@ -126,6 +128,7 @@ var createObj = function(){
         });
     });
 }
+
 /*Criação do objeto 2 */
 var createObj1 = function(points){
     THREE.Loader.Handlers.add(/\.dds$/i, new THREE.DDSLoader());
@@ -154,6 +157,7 @@ var createObj1 = function(points){
     });
 }
 
+var i_render = 0;
 var render = function() {
     requestAnimationFrame(render);
 
@@ -165,6 +169,16 @@ var render = function() {
       this.camera2Position();
       renderer.render (scene, camera2);
    }
+
+    if(i_render == 0){
+        this.moverPatoBezier(points);
+    }
+    if(i_render == 1)
+        i_render = -1;
+    
+    i_render+=1;
+    
+  
 };
 
 /*Criar um plano embaixo do objeto*/
@@ -185,16 +199,16 @@ var camera1Position = function() {
     camera1.position.x = radius * Math.cos(angle);
     camera1.position.z = radius * Math.sin(angle);
     camera1.position.y = 80;
-    angle -= 0.01;
+    //angle -= 0.01;
 }
 /*posicionar a camera 2*/
 var camera2Position = function() {
 
     camera2.lookAt(scene.position);
     camera2.position.x = radius * Math.cos(angle);
-    camera2.position.z = radius * Math.sin(angle);
-    camera2.position.y = 25;
-    angle += 0.01;
+    camera2.position.z = radius * Math.sin(20);
+    camera2.position.y = 130;
+    //angle += 0.01;
 }
 
 function sleep(milliseconds) {
