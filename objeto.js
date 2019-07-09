@@ -9,6 +9,7 @@ var controls = {};
 var player = {height:1.8, speed: 2.5, turnSpeed: Math.PI * 0.02};
 var animation;
 var clock;
+var controls;
 
 
 var init = function() {
@@ -23,9 +24,9 @@ var init = function() {
     /*inicializando camera1 e camera2 */
    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 4000);
    camera.position.set(0,350,1300);
-	camera.lookAt(scene.position); 
+	camera.lookAt(scene.position);
 
-   scene.add(camera); 
+   scene.add(camera);
 
 
    scene.add( new THREE.AmbientLight( 0x222222 ) );
@@ -42,8 +43,8 @@ var init = function() {
 	light.shadow.camera.top = 350;
 	light.shadow.camera.bottom = - 350;
 	scene.add( light );
-	
-   
+
+
    var gt = new THREE.TextureLoader().load("textures/terrain/grasslight-big.jpg");
 	var gg = new THREE.PlaneBufferGeometry( 16000, 16000 );
 	var gm = new THREE.MeshPhongMaterial( { color: 0xffffff, map: gt } );
@@ -60,6 +61,7 @@ var init = function() {
 
    /*criando os objetos */
    this.createObj();
+   this.createShrek();
 
 
    renderer = new THREE.WebGLRenderer();
@@ -72,6 +74,7 @@ var init = function() {
 	renderer.shadowMap.enabled = true;
 	renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
+   controls = new THREE.OrbitControls( camera, renderer.domElement );
 
    this.animate();
 };
@@ -79,7 +82,6 @@ var init = function() {
 
 
 window.onload = this.init;
-
 
 
 /*Criação do objeto 1 */
@@ -91,9 +93,25 @@ var createObj = function(){
       object.position.y = 250;
       scene.add(object) ;
       animation = result.animation;
-   }); 
-   
+   });
+
 };
+
+var createShrek = function(){
+    THREE.Loader.Handlers.add(/\.dds$/i, new THREE.DDSLoader());
+    var loader = new THREE.MTLLoader();
+    loader.load('shrek/source/CHARACTER_Shrek/CHARACTER_Shrek.mtl', function (materials) {
+
+        materials.preload();
+
+        var objloader = new THREE.OBJLoader();
+        objloader.setMaterials(materials)
+
+        objloader.load('shrek/source/CHARACTER_Shrek/CHARACTER_Shrek.obj', function (object) {
+         scene.add(object);
+        });
+    });
+}
 
 var keydown = function(event){
    controls[event.keyCode] = true;
@@ -105,10 +123,10 @@ var keyup = function(event){
 
 var animate = function(){
    requestAnimationFrame( animate, renderer.domElement );
-   
-   var delta = clock.getDelta(); 
-	var moveDistance = 200 * delta; 
-	var rotateAngle = Math.PI / 2 * delta; 
+
+   var delta = clock.getDelta();
+	var moveDistance = 200 * delta;
+	var rotateAngle = Math.PI / 2 * delta;
 
 
    /*W*/
@@ -125,7 +143,7 @@ var animate = function(){
    }
    /*D*/
    if(controls[68]){
-      object.translateX(  moveDistance );	
+      object.translateX(  moveDistance );
    }
 
    if(controls[37]){
