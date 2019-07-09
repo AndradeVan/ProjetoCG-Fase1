@@ -8,5 +8,10 @@ Foi realizada uma mudança geral no estilo do trabalho, porém alguns requisitos
 - Objeto articulado (polvo)
 - Tentativa de adição de um segundo objeto(Shrek) carregado de arquivo(nao conseguimos).
 
+Para executar:
+Digitar no terminal: -python3 -m http.server
+No browser entrar em: localhost:8000
+
+
 
 Infelizmente, pela dificuldade do fim do semestre não conseguimos atingir o que queriamos no trabalho.
