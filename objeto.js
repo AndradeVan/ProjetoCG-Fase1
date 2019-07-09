@@ -8,6 +8,7 @@ var flagAprox = 0;
 var controls = {};
 var player = {height:1.8, speed: 2.5, turnSpeed: Math.PI * 0.02};
 var animation;
+var clock;
 
 
 var init = function() {
@@ -17,12 +18,12 @@ var init = function() {
     scene.background = new THREE.Color(0x77dd77);
     /*parte do fundo branco*/
     scene.fog = new THREE.Fog( 0xffffff, 1000, 4000 );
-    
+    clock = new THREE.Clock();
 
     /*inicializando camera1 e camera2 */
    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 4000);
-   camera.position.set(0, 150, 1300);
-   camera.lookAt(new THREE.Vector3(0,player.height,0));  
+   camera.position.set(0,350,1300);
+	camera.lookAt(scene.position); 
 
    scene.add(camera); 
 
@@ -105,42 +106,43 @@ var keyup = function(event){
 var animate = function(){
    requestAnimationFrame( animate, renderer.domElement );
    
+   var delta = clock.getDelta(); 
+	var moveDistance = 200 * delta; 
+	var rotateAngle = Math.PI / 2 * delta; 
 
+
+   /*W*/
    if(controls[87]){
-      object.position.x += Math.sin(object.rotation.y) * player.speed;
-      object.position.z += -Math.cos(object.rotation.y) * player.speed;
+      object.translateZ( -moveDistance );
    }
+   /*S*/
    if(controls[83]){
-      object.position.x -= Math.sin(object.rotation.y) * player.speed;
-      object.position.z -= -Math.cos(object.rotation.y) * player.speed;
+      object.translateZ(  moveDistance );
    }
+   /*A*/
    if(controls[65]){
-      object.position.x += Math.sin(object.rotation.y - Math.PI/2) * player.speed;
-      object.position.z += -Math.cos(object.rotation.y - Math.PI/2) * player.speed;
+      object.translateX( -moveDistance );
    }
+   /*D*/
    if(controls[68]){
-      object.position.x += Math.sin(object.rotation.y + Math.PI/2) * player.speed;
-      object.position.z += -Math.cos(object.rotation.y + Math.PI/2) * player.speed;
+      object.translateX(  moveDistance );	
    }
 
    if(controls[37]){
-      object.rotation.y += player.turnSpeed; 
+      object.rotateOnAxis( new THREE.Vector3(0,1,0), rotateAngle);
    }
 
    if(controls[39]){
-      object.rotation.y -= player.turnSpeed; 
+      object.rotateOnAxis( new THREE.Vector3(0,1,0), -rotateAngle);
    }
-   //mover objeto
-   /*object.position.set(
-      camera.position.x - Math.sin(camera.rotation.y),
-      camera.position.y + 120,
-      camera.position.z - 350
-   );
-   object.rotation.set(
-      camera.rotation.x,
-      camera.rotation.y,
-      camera.rotation.z
-   );*/
+
+   var camerarelativa = new THREE.Vector3(0,250,1000);
+	var cameraOffset = camerarelativa.applyMatrix4( object.matrixWorld );
+	camera.position.x = cameraOffset.x;
+	camera.position.y = cameraOffset.y;
+	camera.position.z = cameraOffset.z;
+	camera.lookAt( object.position );
+
 
 	renderer.render( scene, camera );
 	if ( animation ) animation.setTime( performance.now() / 1000 );
