@@ -1,9 +1,6 @@
 var scene;
 var camera, camera1;
 var renderer;
-var criarTextura;
-
-
 var create,create1,create2;
 var angle = 0;
 var radius = 100;
@@ -49,29 +46,29 @@ var init = function() {
 	scene.add( light );
    
    
+   var criarTextura = new THREE.TextureLoader().load("metalbox_diffuse.png");
    create = new THREE.Mesh(
       new THREE.BoxGeometry(400,400,400),
-      new THREE.MeshPhongMaterial({color:0xffffff})
+      new THREE.MeshPhongMaterial({color:0xffffff, map:criarTextura})
    );
    scene.add(create);
    create.position.set(0,250,-1300);
    colicao.push(create);
 
-   var textura = new THREE.TextureLoader();
-   criarTextura = new TextureLoader.load("")
-
+   //var textura = new THREE.TextureLoader();
+   var criarTextura = new THREE.TextureLoader().load("metalbox_bump.png");
+      
    create1 = new THREE.Mesh(
       new THREE.BoxGeometry(400,400,400),
-      new THREE.MeshPhongMaterial({color:0xffffff})
+      new THREE.MeshPhongMaterial({color:0xffffff,
+      
+         map:criarTextura
+      })
    );
    scene.add(create1);
    create1.position.set(1000,250,-1300);
    colicao.push(create1);
 
-
-
-
-   
    var gt = new THREE.TextureLoader().load("textures/terrain/grasslight-big.jpg");
 	var gg = new THREE.PlaneBufferGeometry( 16000, 16000 );
 	var gm = new THREE.MeshPhongMaterial( { color: 0xffffff, map: gt } );
