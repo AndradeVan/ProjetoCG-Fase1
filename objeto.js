@@ -2,11 +2,8 @@ var scene;
 var camera, camera1;
 var renderer;
 var create,create1,create2;
-var angle = 0;
-var radius = 100;
-var flagAprox = 0;
-var controls = {};
-var player = {height:1.8, speed: 2.5, turnSpeed: Math.PI * 0.02};
+
+var controls;
 var animation;
 var colicao = [];
 var clock;
@@ -96,6 +93,8 @@ var init = function() {
 
 	renderer.shadowMap.enabled = true;
 	renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+   controls = new THREE.OrbitControls( camera, renderer.domElement );
 
    this.animate();
 };
